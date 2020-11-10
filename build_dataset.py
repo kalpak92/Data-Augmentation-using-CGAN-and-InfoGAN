@@ -21,13 +21,9 @@ class DataLoader:
         error_msg = "[!] valid_size should be in the range [0, 1]."
         assert ((validation_size >= 0) and (validation_size <= 1)), error_msg
 
-        train_transform = transforms.Compose([
-            transforms.ToTensor()
-        ])
         if transforms is not None:
             train_transform = transforms.Compose([
                 transforms,
-                train_transform
             ])
 
         if augment:
@@ -38,8 +34,20 @@ class DataLoader:
             ])
 
         if self.dataset_name == "MNIST":
+            normalize = self.__get_mnist_normalize_val()
+            train_transform = transforms.Compose([
+                train_transform,
+                transforms.ToTensor(),
+                normalize,
+            ])
             self.__load_train_mnist_dataset(transforms=train_transform)
         elif self.dataset_name == "CIFAR10":
+            normalize = self.__get_cifar10_normalize_val()
+            train_transform = transforms.Compose([
+                train_transform,
+                transforms.ToTensor(),
+                normalize,
+            ])
             self.__load_train_cifar10_dataset(transforms=train_transform)
 
         num_train = len(self.train_dataset)
@@ -72,8 +80,18 @@ class DataLoader:
         ])
 
         if self.dataset_name == "MNIST":
+            normalize = self.__get_mnist_normalize_val()
+            test_transform = transforms.Compose([
+                test_transform,
+                normalize,
+            ])
             self.__load_test_mnist_dataset(transforms=test_transform)
         elif self.dataset_name == "CIFAR10":
+            normalize = self.__get_cifar10_normalize_val()
+            test_transform = transforms.Compose([
+                test_transform,
+                normalize,
+            ])
             self.__load_test_cifar10_dataset(transforms=test_transform)
 
         self.test_data_loader = torch.utils.data.DataLoader(
@@ -114,3 +132,12 @@ class DataLoader:
             root='data/cifar10', train=False,
             download=True, transform=transform,
         )
+
+    def __get_mnist_normalize_val(self):
+        return transforms.Normalize((0.1307,), (0.3081,))
+
+    def __get_cifar10_normalize_val(self):
+        return transforms.Normalize(
+                mean=[0.4914, 0.4822, 0.4465],
+                std=[0.2023, 0.1994, 0.2010],
+            )
