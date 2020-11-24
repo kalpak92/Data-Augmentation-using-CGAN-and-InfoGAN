@@ -1,5 +1,6 @@
 import torch
 from torch.autograd import Variable
+import torch.nn as nn
 import torch.nn.functional as F
 
 class TrainCnn():
@@ -13,6 +14,14 @@ class TrainCnn():
 
     def save_model(self, path):
         torch.save(self.model.state_dict(), path)
+
+    def initialize_parameters(m):
+        if isinstance(m, nn.Conv2d):
+            nn.init.kaiming_normal_(m.weight.data, nonlinearity='relu')
+            nn.init.constant_(m.bias.data, 0)
+        elif isinstance(m, nn.Linear):
+            nn.init.xavier_normal_(m.weight.data, gain=nn.init.calculate_gain('relu'))
+            nn.init.constant_(m.bias.data, 0)
 
     def run(self, scheduler, epochs, train_loader):
         print("Start Training...")

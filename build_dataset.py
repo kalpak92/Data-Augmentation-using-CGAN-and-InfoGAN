@@ -15,13 +15,13 @@ class DataLoader:
         self.validation_data_loader = None
         self.test_data_loader = None
 
-    def get_train_val_loader(self, batch_size, transforms=None, augment=False,
+    def get_train_val_loader(self, batch_size, transform=None, augment=False,
                              validation_size=0.1, shuffle=True, num_workers=8, pin_memory=False):
         global train_transform
         error_msg = "[!] valid_size should be in the range [0, 1]."
         assert ((validation_size >= 0) and (validation_size <= 1)), error_msg
 
-        if transforms is not None:
+        if transform is not None:
             train_transform = transforms.Compose([
                 transforms,
             ])
@@ -37,10 +37,11 @@ class DataLoader:
             normalize = self.__get_mnist_normalize_val()
             train_transform = transforms.Compose([
                 train_transform,
+                transforms.Resize(32),
                 transforms.ToTensor(),
                 normalize,
             ])
-            self.__load_train_mnist_dataset(transforms=train_transform)
+            self.__load_train_mnist_dataset(transform=train_transform)
         elif self.dataset_name == "CIFAR10":
             normalize = self.__get_cifar10_normalize_val()
             train_transform = transforms.Compose([
@@ -48,7 +49,7 @@ class DataLoader:
                 transforms.ToTensor(),
                 normalize,
             ])
-            self.__load_train_cifar10_dataset(transforms=train_transform)
+            self.__load_train_cifar10_dataset(transform=train_transform)
 
         num_train = len(self.train_dataset)
         indices = list(range(num_train))
@@ -73,26 +74,22 @@ class DataLoader:
 
         return self.train_data_loader, self.validation_data_loader
 
-    def get_test_loader(self, batch_size, shuffle=True, num_workers=4, pin_memory=False):
-        # define transform
-        test_transform = transforms.Compose([
-            transforms.ToTensor(),
-        ])
-
+    def get_test_loader(self, batch_size, shuffle=False, num_workers=4, pin_memory=False):
         if self.dataset_name == "MNIST":
             normalize = self.__get_mnist_normalize_val()
             test_transform = transforms.Compose([
-                test_transform,
+                transforms.Resize(32),
+                transforms.ToTensor(),
                 normalize,
             ])
-            self.__load_test_mnist_dataset(transforms=test_transform)
+            self.__load_test_mnist_dataset(transform=test_transform)
         elif self.dataset_name == "CIFAR10":
             normalize = self.__get_cifar10_normalize_val()
             test_transform = transforms.Compose([
-                test_transform,
+                transforms.ToTensor(),
                 normalize,
             ])
-            self.__load_test_cifar10_dataset(transforms=test_transform)
+            self.__load_test_cifar10_dataset(transform=test_transform)
 
         self.test_data_loader = torch.utils.data.DataLoader(
             self.test_dataset, batch_size=batch_size, shuffle=shuffle,
@@ -133,10 +130,12 @@ class DataLoader:
             download=True, transform=transform,
         )
 
-    def __get_mnist_normalize_val(self):
+    @staticmethod
+    def __get_mnist_normalize_val():
         return transforms.Normalize((0.1307,), (0.3081,))
 
-    def __get_cifar10_normalize_val(self):
+    @staticmethod
+    def __get_cifar10_normalize_val():
         return transforms.Normalize(
                 mean=[0.4914, 0.4822, 0.4465],
                 std=[0.2023, 0.1994, 0.2010],
