@@ -15,7 +15,7 @@ class DataLoader:
         self.validation_data_loader = None
         self.test_data_loader = None
 
-    def get_train_val_loader(self, batch_size, transform=None, augment=False,
+    def get_train_val_dataloader(self, batch_size, transform=None, augment=False,
                              validation_size=0.1, shuffle=True, num_workers=8, pin_memory=False):
         global train_transform
         error_msg = "[!] valid_size should be in the range [0, 1]."

@@ -3,6 +3,7 @@ from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class TrainCnn():
     def __init__(self, model, optimizer=None, scheduler=None, load_path=None):
         self.metrics = []
@@ -12,10 +13,7 @@ class TrainCnn():
         self.optimizer = optimizer
         self.scheduler = scheduler
 
-    def save_model(self, path):
-        torch.save(self.model.state_dict(), path)
-
-    def initialize_parameters(m):
+    def initialize_weights_biases(m):
         if isinstance(m, nn.Conv2d):
             nn.init.kaiming_normal_(m.weight.data, nonlinearity='relu')
             nn.init.constant_(m.bias.data, 0)
