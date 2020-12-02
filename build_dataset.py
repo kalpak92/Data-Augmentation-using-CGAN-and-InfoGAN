@@ -1,8 +1,7 @@
 import torch
-import numpy as np
+from torch.utils.data.sampler import SubsetRandomSampler
 from torchvision import datasets
 from torchvision import transforms
-from torch.utils.data.sampler import SubsetRandomSampler
 
 
 class DataLoader:
@@ -38,8 +37,7 @@ class DataLoader:
         # valid_sampler = SubsetRandomSampler(valid_idx)
 
         self.train_data_loader = torch.utils.data.DataLoader(
-            self.train_dataset, batch_size=batch_size,
-            num_workers=num_workers, pin_memory=pin_memory,
+            self.train_dataset, batch_size=batch_size, pin_memory=pin_memory,
         )
 
         # self.validation_data_loader = torch.utils.data.DataLoader(
@@ -64,7 +62,11 @@ class DataLoader:
 
     def __load_train_mnist_dataset(self, train_transform=None):
         self.train_dataset = datasets.MNIST(
-            root='data/mnist', train=True,
+            root='./data/mnist', train=True,
+            download=True, transform=train_transform,
+        )
+        self.validation_dataset = datasets.MNIST(
+            root='./data/mnist', train=True,
             download=True, transform=train_transform,
         )
         # self.validation_dataset = datasets.MNIST(
@@ -74,7 +76,11 @@ class DataLoader:
 
     def __load_train_cifar10_dataset(self, train_transform=None):
         self.train_dataset = datasets.CIFAR10(
-            root='data/cifar10', train=True,
+            root='./data/cifar10', train=True,
+            download=True, transform=train_transform,
+        )
+        self.validation_dataset = datasets.CIFAR10(
+            root='./data/cifar10', train=True,
             download=True, transform=train_transform,
         )
         # self.validation_dataset = datasets.CIFAR10(
@@ -84,13 +90,13 @@ class DataLoader:
 
     def __load_test_mnist_dataset(self, transform=None):
         self.test_dataset = datasets.CIFAR10(
-            root='data/mnist', train=False,
+            root='./data/mnist', train=False,
             download=True, transform=transform,
         )
 
     def __load_test_cifar10_dataset(self, transform=None):
         self.test_dataset = datasets.CIFAR10(
-            root='data/cifar10', train=False,
+            root='./data/cifar10', train=False,
             download=True, transform=transform,
         )
 
@@ -104,7 +110,7 @@ class DataLoader:
             resize = False
 
         # define transforms
-        if resize:
+        if not resize:
             train_transform = transforms.Compose([
                 transforms.Resize(32),
                 transforms.ToTensor(),
@@ -125,6 +131,6 @@ class DataLoader:
     @staticmethod
     def __get_cifar10_normalize_val():
         return transforms.Normalize(
-                mean=[0.4914, 0.4822, 0.4465],
-                std=[0.2023, 0.1994, 0.2010],
-            )
+            mean=[0.4914, 0.4822, 0.4465],
+            std=[0.2023, 0.1994, 0.2010],
+        )
