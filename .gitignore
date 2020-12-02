@@ -2,3 +2,5 @@
 *.iml
 *.xml
 *.pt
+*.pyc
+__pycache__
