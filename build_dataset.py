@@ -38,16 +38,16 @@ class DataLoader:
         valid_sampler = SubsetRandomSampler(valid_idx)
 
         self.train_data_loader = torch.utils.data.DataLoader(
-            self.train_dataset, batch_size=batch_size, sampler=train_sampler,
+            self.train_dataset, batch_size=batch_size,
             num_workers=num_workers, pin_memory=pin_memory,
         )
 
-        self.validation_data_loader = torch.utils.data.DataLoader(
-            self.validation_dataset, batch_size=batch_size, sampler=valid_sampler,
-            num_workers=num_workers, pin_memory=pin_memory,
-        )
+        # self.validation_data_loader = torch.utils.data.DataLoader(
+        #     self.validation_dataset, batch_size=batch_size, sampler=valid_sampler,
+        #     num_workers=num_workers, pin_memory=pin_memory,
+        # )
 
-        return self.train_data_loader, self.validation_data_loader
+        return self.train_data_loader
 
     def get_test_loader(self, batch_size, shuffle=False, num_workers=4, pin_memory=False):
         if self.dataset_name == "MNIST":
