@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class Generator(nn.Module):
+class MNIST_Generator(nn.Module):
     def __init__(self):
         super().__init__()
 
@@ -34,7 +34,7 @@ class Generator(nn.Module):
         return img
 
 
-class Discriminator(nn.Module):
+class MNIST_Discriminator(nn.Module):
     def __init__(self):
         super().__init__()
 
@@ -56,7 +56,7 @@ class Discriminator(nn.Module):
         return x
 
 
-class DHead(nn.Module):
+class MNIST_DHead(nn.Module):
     def __init__(self):
         super().__init__()
 
@@ -68,7 +68,7 @@ class DHead(nn.Module):
         return output
 
 
-class QHead(nn.Module):
+class MNIST_QHead(nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(in_channels=1024, out_channels=128,

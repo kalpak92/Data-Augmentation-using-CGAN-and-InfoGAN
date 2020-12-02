@@ -9,7 +9,8 @@ import torchvision.utils as vutils
 
 import utils
 from CONSTANTS import Constants
-from info_GAN_model import Generator, Discriminator, DHead, QHead
+from info_GAN_model_MNIST import MNIST_Generator, MNIST_Discriminator, \
+    MNIST_DHead, MNIST_QHead
 from utils import NormalNLLLoss
 
 
@@ -24,23 +25,25 @@ class GAN_Manager:
         self.num_con_c = num_con_c  # 2 for MNIST
         self.dataloader = dataloader
 
+    def get_models(self):
+        if self.dataset_name == Constants.MNIST:
+            return MNIST_Generator().to(self.device), MNIST_Discriminator().to(self.device), \
+                   MNIST_DHead().to(self.device), MNIST_QHead().to(self.device)
+
     def train_info_GAN(self):
         train_img_fig_name = Constants.INFO_GAN_TRAIN_IMAGE_PATH.format(self.dataset_name)
         utils.plot_train_images(self.device, self.dataloader, train_img_fig_name)
 
-        netG = Generator().to(self.device)
+        netG, discriminator, netD, netQ = self.get_models()
         netG.apply(utils.weights_init_InfoGAN)
         print(netG)
 
-        discriminator = Discriminator().to(self.device)
         discriminator.apply(utils.weights_init_InfoGAN)
         print(discriminator)
 
-        netD = DHead().to(self.device)
         netD.apply(utils.weights_init_InfoGAN)
         print(netD)
 
-        netQ = QHead().to(self.device)
         netQ.apply(utils.weights_init_InfoGAN)
         print(netQ)
 
@@ -163,7 +166,7 @@ class GAN_Manager:
                                           fixed_noise, self.dataset_name)
 
             # Save network weights.
-            if (epoch+1) % Constants.INFO_GAN_EPOCH  == 0:
+            if (epoch + 1) % Constants.INFO_GAN_EPOCH == 0:
                 torch.save({
                     'netG': netG.state_dict(),
                     'discriminator': discriminator.state_dict(),
