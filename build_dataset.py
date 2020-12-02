@@ -16,26 +16,26 @@ class DataLoader:
         self.test_data_loader = None
 
     def get_train_val_dataloader(self, batch_size, transform=False, validation_size=0.1,
-                                 shuffle=True, num_workers=8, pin_memory=False):
-        global normalize
-        error_msg = "[!] valid_size should be in the range [0, 1]."
-        assert ((validation_size >= 0) and (validation_size <= 1)), error_msg
+                                 shuffle=True, num_workers=1, pin_memory=False):
+        # global normalize
+        # error_msg = "[!] valid_size should be in the range [0, 1]."
+        # assert ((validation_size >= 0) and (validation_size <= 1)), error_msg
 
         if self.dataset_name == "MNIST":
             self.__load_train_mnist_dataset(train_transform=self.__get_transform())
         elif self.dataset_name == "CIFAR10":
             self.__load_train_cifar10_dataset(train_transform=self.__get_transform())
 
-        num_train = len(self.train_dataset)
-        indices = list(range(num_train))
-        split = int(np.floor(validation_size * num_train))
+        # num_train = len(self.train_dataset)
+        # indices = list(range(num_train))
+        # split = int(np.floor(validation_size * num_train))
 
-        if shuffle:
-            np.random.shuffle(indices)
-
-        train_idx, valid_idx = indices[split:], indices[:split]
-        train_sampler = SubsetRandomSampler(train_idx)
-        valid_sampler = SubsetRandomSampler(valid_idx)
+        # if shuffle:
+        #     np.random.shuffle(indices)
+        #
+        # train_idx, valid_idx = indices[split:], indices[:split]
+        # train_sampler = SubsetRandomSampler(train_idx)
+        # valid_sampler = SubsetRandomSampler(valid_idx)
 
         self.train_data_loader = torch.utils.data.DataLoader(
             self.train_dataset, batch_size=batch_size,
@@ -49,7 +49,7 @@ class DataLoader:
 
         return self.train_data_loader
 
-    def get_test_loader(self, batch_size, shuffle=False, num_workers=4, pin_memory=False):
+    def get_test_loader(self, batch_size, shuffle=False, num_workers=1, pin_memory=False):
         if self.dataset_name == "MNIST":
             self.__load_test_mnist_dataset(transform=self.__get_transform())
         elif self.dataset_name == "CIFAR10":
@@ -64,23 +64,23 @@ class DataLoader:
 
     def __load_train_mnist_dataset(self, train_transform=None):
         self.train_dataset = datasets.MNIST(
-            root='/data/mnist', train=True,
+            root='data/mnist', train=True,
             download=True, transform=train_transform,
         )
-        self.validation_dataset = datasets.MNIST(
-            root='/data/mnist', train=True,
-            download=True, transform=train_transform,
-        )
+        # self.validation_dataset = datasets.MNIST(
+        #     root='data/mnist', train=True,
+        #     download=True, transform=train_transform,
+        # )
 
     def __load_train_cifar10_dataset(self, train_transform=None):
         self.train_dataset = datasets.CIFAR10(
-            root='/data/cifar10', train=True,
+            root='data/cifar10', train=True,
             download=True, transform=train_transform,
         )
-        self.validation_dataset = datasets.CIFAR10(
-            root='/data/cifar10', train=True,
-            download=True, transform=train_transform,
-        )
+        # self.validation_dataset = datasets.CIFAR10(
+        #     root='data/cifar10', train=True,
+        #     download=True, transform=train_transform,
+        # )
 
     def __load_test_mnist_dataset(self, transform=None):
         self.test_dataset = datasets.CIFAR10(

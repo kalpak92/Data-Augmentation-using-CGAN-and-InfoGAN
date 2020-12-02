@@ -1,49 +1,51 @@
-import torch
 from torch.autograd import Variable
-import torch.nn as nn
-import torch.nn.functional as F
+from tqdm import tqdm
+from convNet import loss_fn
+from utils import RunningAverageLoss, plot_loss_epoch
 
 
 class TrainCnn():
-    def __init__(self, model, optimizer=None, scheduler=None, load_path=None):
-        self.metrics = []
-        self.model = model
-        if load_path is not None:
-            self.model = torch.load(load_path)
-        self.optimizer = optimizer
-        self.scheduler = scheduler
+    def train(self, model, optimizer, params):
+        train_data_loader = params.train_dataloader
+        loss_train = []
+        print("Start Training CNN ...")
+        model.train()
 
-    def initialize_weights_biases(m):
-        if isinstance(m, nn.Conv2d):
-            nn.init.kaiming_normal_(m.weight.data, nonlinearity='relu')
-            nn.init.constant_(m.bias.data, 0)
-        elif isinstance(m, nn.Linear):
-            nn.init.xavier_normal_(m.weight.data, gain=nn.init.calculate_gain('relu'))
-            nn.init.constant_(m.bias.data, 0)
+        for epoch in range(params.num_epochs):
+            # Run one epoch
+            print("Epoch {}/{}".format(epoch + 1, params.num_epochs))
+            loss_avg = RunningAverageLoss()
+            loss_total = 0
+            # Use tqdm for progress bar
+            with tqdm(total=len(train_data_loader)) as t:
+                for i, (train_batch, label_batch) in enumerate(train_data_loader):
+                    # move to GPU if available
+                    if params.cuda:
+                        train_batch, label_batch = train_batch.cuda(
+                            non_blocking=True), label_batch.cuda(non_blocking=True)
 
-    def run(self, scheduler, epochs, train_loader):
-        print("Start Training...")
+                    # convert to torch Variables
+                    train_batch, label_batch = Variable(
+                        train_batch), Variable(label_batch)
 
-        for epoch in range(epochs):
-            if scheduler is not None:
-                scheduler.step()
+                    # compute model output and loss
+                    output_batch = model(train_batch)
+                    loss = loss_fn(output_batch, label_batch)
 
-            epoch_loss = 0
-            correct = 0
+                    # clear previous gradients, compute gradients of all variables wrt loss
+                    optimizer.zero_grad()
+                    loss.backward()
 
-            for batch_idx, (data, label) in enumerate(train_loader):
-                self.optimizer.zero_grad()
+                    # performs updates using calculated gradients
+                    optimizer.step()
 
-                X = Variable(data.view(-1, 784))
-                Y = Variable(label)
+                    # update the average loss and total loss
+                    loss_avg.update(loss.item())
+                    loss_total += loss.item()
 
-                out = self.model(X)
+                    t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
+                    t.update()
 
-                pred = out.data.max(1, keepdim=True)[1]
-                predicted = pred.eq(Y.data.view_as(pred))
+                loss_train.append(loss_total)
 
-                correct += predicted.sum()
-                loss = F.nll_loss(out, Y)
-                loss.backward()
-                self.optimizer.step()
-                epoch_loss += loss.item()
+        plot_loss_epoch(loss_train, params.loss_plot_path)
