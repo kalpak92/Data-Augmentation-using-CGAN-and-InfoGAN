@@ -62,7 +62,14 @@ def accuracy(outputs, labels):
     outputs = np.argmax(outputs, axis=1)
     return np.sum(outputs == labels) / float(labels.size)
 
+def precision(outputs, labels):
+    pass
+
+def recall(outputs, labels):
+    pass
 
 metrics = {
     'accuracy': accuracy,
+    'precision': precision,
+    'recall': recall
 }
