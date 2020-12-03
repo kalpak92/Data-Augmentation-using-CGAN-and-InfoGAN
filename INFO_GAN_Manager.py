@@ -174,7 +174,7 @@ class INFO_GAN_Manager:
                     'netQ': netQ.state_dict(),
                     'optimD': optimD.state_dict(),
                     'optimG': optimG.state_dict(),
-                }, 'checkpoint/Info_GAN/model_epoch_%d_{}.pt'.format(self.dataset_name) % (epoch + 1))
+                }, 'checkpoint/INFO_GAN/model_epoch_%d_{}.pt'.format(self.dataset_name) % (epoch + 1))
 
         training_time = time.time() - start_time
         print("-" * 50)

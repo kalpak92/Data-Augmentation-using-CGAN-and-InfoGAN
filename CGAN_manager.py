@@ -170,7 +170,7 @@ class CGANManager:
 
         # Generate image to check performance of trained generator.
         with torch.no_grad():
-            one_hot_labels = self.get_one_hot_labels(torch.Tensor([5]).long(), self.n_classes)
+            one_hot_labels = self.get_one_hot_labels(torch.Tensor([5]).long(), self.n_classes).to(self.device)
             fake_noise = get_noise(1, self.z_dim, device=self.device)
             noise_and_labels = self.combine_vectors(fake_noise, one_hot_labels)
             gen_data = gen(noise_and_labels).detach().cpu()
