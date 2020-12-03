@@ -89,8 +89,8 @@ class DataLoader:
         # )
 
     def __load_test_mnist_dataset(self, transform=None):
-        self.test_dataset = datasets.CIFAR10(
-            root='./data/mnist', train=False,
+        self.test_dataset = datasets.MNIST(
+            root='data/mnist', train=False,
             download=True, transform=transform,
         )
 
