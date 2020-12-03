@@ -13,3 +13,7 @@ class Constants:
     INFO_GAN_TRAIN_IMAGE_PER_EPOCH_PATH = "./Info_GAN_Images/Generated_image_per_epoch"
     INFO_GAN_LR = 2e-4
     INFO_GAN_EPOCH = 3000
+
+    C_GAN_LR = 0.0002
+
+    C_GAN_BATCH_SIZE = 128
