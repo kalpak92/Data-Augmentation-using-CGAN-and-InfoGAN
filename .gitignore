@@ -2,12 +2,7 @@
 *.iml
 *.xml
 *.pt
-<<<<<<< Updated upstream
 *.pyc
 __pycache__
-=======
->>>>>>> Stashed changes
-*.pyc
-*.pyc
-*.pyc
-*.pyc
+
+
