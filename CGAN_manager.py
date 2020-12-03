@@ -93,8 +93,7 @@ class CGANManager:
         disc_fake_pred = False
         disc_real_pred = False
         start_time = time.time()
-        # for epoch in range(Constants.CGAN_EPOCH):
-        for epoch in range(1):
+        for epoch in range(Constants.CGAN_EPOCH):
             epoch_start_time = time.time()
             # Dataloader returns the batches and the labels
             for i, (real, labels) in enumerate(self.dataloader):
@@ -155,7 +154,7 @@ class CGANManager:
                 generator_losses += [gen_loss.item()]
 
                 # Check progress of training.
-                if i != 0 or i % 100 == 0:
+                if i != 0 and i % 100 == 0:
                     print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f'
                           % (epoch + 1, Constants.CGAN_EPOCH, i, len(self.dataloader),
                              disc_loss.item(), gen_loss.item()))
