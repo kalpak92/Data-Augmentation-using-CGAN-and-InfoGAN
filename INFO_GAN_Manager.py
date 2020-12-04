@@ -211,6 +211,7 @@ class INFO_GAN_Manager:
                     'params': Constants.params
                 }, 'checkpoint/model_epoch_%d_{}'.format(self.dataset_name) % (epoch + 1))
 
+
         training_time = time.time() - start_time
         print("-" * 50)
         print('Training finished!\nTotal Time for Training: %.2fm' % (training_time / 60))
