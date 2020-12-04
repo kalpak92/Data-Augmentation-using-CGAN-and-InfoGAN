@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from torch.autograd import Variable
 from convNet import loss_fn
 
@@ -12,6 +13,8 @@ class TestCnn():
 
         # summary of current evaluation loop
         summary = []
+        predictions = torch.tensor([])
+        labels = torch.tensor([])
 
         for data_batch, labels_batch in test_data_loader:
             # move to GPU if available
@@ -24,6 +27,10 @@ class TestCnn():
             # compute model output
             output_batch = model(data_batch)
             loss = loss_fn(output_batch, labels_batch)
+
+            _, y_pred_tags = torch.max(output_batch, dim=1)
+            predictions = torch.cat((predictions, y_pred_tags.cpu()), dim=0)
+            labels = torch.cat((labels, labels_batch.cpu()), dim=0)
 
             # extract data from torch Variable, move to cpu, convert to numpy arrays
             output_batch = output_batch.data.cpu().numpy()
@@ -38,4 +45,5 @@ class TestCnn():
         # compute mean of all metrics in summary
         metrics_mean = {metric: np.mean([x[metric]
                                          for x in summary]) for metric in summary[0]}
-        return metrics_mean
+
+        return metrics_mean, predictions.numpy(), labels.numpy()

@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data.sampler import SubsetRandomSampler
+from torch.utils.data import random_split, ConcatDataset
 from torchvision import datasets
 from torchvision import transforms
 
@@ -8,50 +8,57 @@ class DataLoader:
     def __init__(self, dataset):
         self.dataset_name = dataset
         self.train_dataset = None
-        self.validation_dataset = None
         self.test_dataset = None
         self.train_data_loader = None
-        self.validation_data_loader = None
         self.test_data_loader = None
 
-    def get_train_val_dataloader(self, batch_size, transform=False, validation_size=0.1,
-                                 shuffle=True, num_workers=1, pin_memory=False):
-        # global normalize
-        # error_msg = "[!] valid_size should be in the range [0, 1]."
-        # assert ((validation_size >= 0) and (validation_size <= 1)), error_msg
+    def get_train_test_dataloader(self, batch_size, shuffle=True, split_percentage=1, num_workers=1, pin_memory=False):
+        error_msg = "[!] split_percentage should be in the range [0, 1]."
+        assert ((split_percentage >= 0) and (split_percentage <= 1)), error_msg
 
-        if self.dataset_name == "MNIST":
-            self.__load_train_mnist_dataset(train_transform=self.__get_transform())
-        elif self.dataset_name == "CIFAR10":
-            self.__load_train_cifar10_dataset(train_transform=self.__get_transform())
+        self.__load_train_dataset()
 
-        # num_train = len(self.train_dataset)
-        # indices = list(range(num_train))
-        # split = int(np.floor(validation_size * num_train))
-
-        # if shuffle:
-        #     np.random.shuffle(indices)
-        #
-        # train_idx, valid_idx = indices[split:], indices[:split]
-        # train_sampler = SubsetRandomSampler(train_idx)
-        # valid_sampler = SubsetRandomSampler(valid_idx)
+        subset_trainA, subset_trainB = self.get_train_dataloader(batch_size=batch_size,
+                                                                 split_percentage=split_percentage)
 
         self.train_data_loader = torch.utils.data.DataLoader(
-            self.train_dataset, batch_size=batch_size, pin_memory=pin_memory,
+            subset_trainA, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=pin_memory
         )
 
-        # self.validation_data_loader = torch.utils.data.DataLoader(
-        #     self.validation_dataset, batch_size=batch_size, sampler=valid_sampler,
-        #     num_workers=num_workers, pin_memory=pin_memory,
-        # )
+        self.__load_test_dataset()
 
-        return self.train_data_loader
+        subset_test_dataset = ConcatDataset([subset_trainB, self.test_dataset])
+
+        self.test_data_loader = torch.utils.data.DataLoader(
+            subset_test_dataset, batch_size=batch_size, shuffle=shuffle,
+            num_workers=num_workers, pin_memory=pin_memory
+        )
+
+        return self.train_data_loader, self.test_data_loader
+
+    def get_train_dataloader(self, batch_size, split_percentage=1,
+                             shuffle=True, num_workers=1, pin_memory=False):
+        error_msg = "[!] split_percentage should be in the range [0, 1]."
+        assert ((split_percentage >= 0) and (split_percentage <= 1)), error_msg
+
+        self.__load_train_dataset()
+
+        if split_percentage == 1:
+            print(num_workers)
+            self.train_data_loader = torch.utils.data.DataLoader(
+                self.train_dataset, batch_size=batch_size, shuffle=shuffle,
+                pin_memory=pin_memory)
+            return self.train_data_loader
+        else:
+            split_lengths = [int(len(self.train_dataset) * split_percentage),
+                             int(len(self.train_dataset) * (1 - split_percentage))]
+
+            subset_trainA, subset_trainB = random_split(self.train_dataset, split_lengths)
+
+            return subset_trainA, subset_trainB
 
     def get_test_loader(self, batch_size, shuffle=False, num_workers=1, pin_memory=False):
-        if self.dataset_name == "MNIST":
-            self.__load_test_mnist_dataset(transform=self.__get_transform())
-        elif self.dataset_name == "CIFAR10":
-            self.__load_test_cifar10_dataset(transform=self.__get_transform())
+        self.__load_test_dataset()
 
         self.test_data_loader = torch.utils.data.DataLoader(
             self.test_dataset, batch_size=batch_size, shuffle=shuffle,
@@ -60,33 +67,29 @@ class DataLoader:
 
         return self.test_data_loader
 
+    def __load_train_dataset(self):
+        if self.dataset_name == "MNIST":
+            self.__load_train_mnist_dataset(train_transform=self.__get_transform())
+        elif self.dataset_name == "FashionMNIST":
+            self.__load_train_fashionMnist_dataset(train_transform=self.__get_transform())
+
     def __load_train_mnist_dataset(self, train_transform=None):
         self.train_dataset = datasets.MNIST(
             root='./data/mnist', train=True,
             download=True, transform=train_transform,
         )
-        self.validation_dataset = datasets.MNIST(
-            root='./data/mnist', train=True,
-            download=True, transform=train_transform,
-        )
-        # self.validation_dataset = datasets.MNIST(
-        #     root='data/mnist', train=True,
-        #     download=True, transform=train_transform,
-        # )
 
-    def __load_train_cifar10_dataset(self, train_transform=None):
-        self.train_dataset = datasets.CIFAR10(
-            root='./data/cifar10', train=True,
+    def __load_train_fashionMnist_dataset(self, train_transform=None):
+        self.train_dataset = datasets.FashionMNIST(
+            root='./data/fashionMnist', train=True,
             download=True, transform=train_transform,
         )
-        self.validation_dataset = datasets.CIFAR10(
-            root='./data/cifar10', train=True,
-            download=True, transform=train_transform,
-        )
-        # self.validation_dataset = datasets.CIFAR10(
-        #     root='data/cifar10', train=True,
-        #     download=True, transform=train_transform,
-        # )
+
+    def __load_test_dataset(self):
+        if self.dataset_name == "MNIST":
+            self.__load_test_mnist_dataset(transform=self.__get_transform())
+        elif self.dataset_name == "FashionMNIST":
+            self.__load_test_fashionMnist_dataset(transform=self.__get_transform())
 
     def __load_test_mnist_dataset(self, transform=None):
         self.test_dataset = datasets.MNIST(
@@ -94,33 +97,23 @@ class DataLoader:
             download=True, transform=transform,
         )
 
-    def __load_test_cifar10_dataset(self, transform=None):
-        self.test_dataset = datasets.CIFAR10(
-            root='./data/cifar10', train=False,
+    def __load_test_fashionMnist_dataset(self, transform=None):
+        self.test_dataset = datasets.FashionMNIST(
+            root='./data/fashionMnist', train=False,
             download=True, transform=transform,
         )
 
     def __get_transform(self):
-        global normalize, resize
+        global normalize
         if self.dataset_name == "MNIST":
             normalize = self.__get_mnist_normalize_val()
-            resize = True
-        elif self.dataset_name == "CIFAR10":
-            normalize = self.__get_cifar10_normalize_val()
-            resize = False
+        elif self.dataset_name == "FashionMNIST":
+            normalize = self.__get_fashionMnist_normalize_val()
 
-        # define transforms
-        if not resize:
-            train_transform = transforms.Compose([
-                transforms.Resize(32),
-                transforms.ToTensor(),
-                normalize,
-            ])
-        else:
-            train_transform = transforms.Compose([
-                transforms.ToTensor(),
-                normalize,
-            ])
+        train_transform = transforms.Compose([
+            transforms.ToTensor(),
+            normalize,
+        ])
 
         return train_transform
 
@@ -129,8 +122,5 @@ class DataLoader:
         return transforms.Normalize((0.1307,), (0.3081,))
 
     @staticmethod
-    def __get_cifar10_normalize_val():
-        return transforms.Normalize(
-            mean=[0.4914, 0.4822, 0.4465],
-            std=[0.2023, 0.1994, 0.2010],
-        )
+    def __get_fashionMnist_normalize_val():
+        return transforms.Normalize((0.5,), (0.5,))

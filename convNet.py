@@ -17,7 +17,7 @@ class ConvNet(nn.Module):
                                padding=1, stride=1)
         self.bn3 = nn.BatchNorm2d(self.num_channels * 24)
 
-        self.fc1 = nn.Linear(in_features=self.num_channels * 24 * 4 * 4, out_features=120)
+        self.fc1 = nn.Linear(in_features=self.num_channels * 24 * 3 * 3, out_features=120)
         self.fcbn1 = nn.BatchNorm1d(120)
         self.fc2 = nn.Linear(in_features=120, out_features=60)
         self.fcbn2 = nn.BatchNorm1d(60)
@@ -25,15 +25,15 @@ class ConvNet(nn.Module):
         self.dropout_rate = params.dropout_rate
 
     def forward(self, s):
-        s = self.bn1(self.conv1(s))  # batch_size x num_channels x 32 x 32
-        s = F.relu(F.max_pool2d(s, 2))  # batch_size x num_channels x 16 x 16
-        s = self.bn2(self.conv2(s))  # batch_size x num_channels x 16 x 16
-        s = F.relu(F.max_pool2d(s, 2))  # batch_size x num_channels x 8 x 8
-        s = self.bn3(self.conv3(s))  # batch_size x num_channels x 8 x 8
-        s = F.relu(F.max_pool2d(s, 2))  # batch_size x num_channels x 4 x 4
+        s = self.bn1(self.conv1(s))  # batch_size x num_channels x 28 x 28
+        s = F.relu(F.max_pool2d(s, 2))  # batch_size x num_channels x 14 x 14
+        s = self.bn2(self.conv2(s))  # batch_size x num_channels x 14 x 14
+        s = F.relu(F.max_pool2d(s, 2))  # batch_size x num_channels x 7 x 7
+        s = self.bn3(self.conv3(s))  # batch_size x num_channels x 7 x 7
+        s = F.relu(F.max_pool2d(s, 2))  # batch_size x num_channels x 3 x 3
 
         # Flatten the output for each image
-        s = s.reshape(-1, self.num_channels * 24 * 4 * 4)  # batch_size x num_channels x 4 x 4
+        s = s.reshape(-1, self.num_channels * 24 * 3 * 3)  # batch_size x num_channels x 3 x 3
 
         # Apply three fully connected layers with dropout
         s = F.dropout(F.relu(self.fcbn1(self.fc1(s))),
@@ -55,21 +55,14 @@ def accuracy(outputs, labels):
     """
     Compute the accuracy, given the outputs and labels for all images.
     Args:
-        outputs: (np.ndarray) dimension batch_size x 6 - log softmax output of the model
-        labels: (np.ndarray) dimension batch_size, where each element is a value in [0, 1, 2, 3, 4, 5]
+        outputs: (np.ndarray) dimension batch_size x 10 - log softmax output of the model
+        labels: (np.ndarray) dimension batch_size, where each element is a value in [0 .. 9]
     Returns: (float) accuracy in [0,1]
     """
     outputs = np.argmax(outputs, axis=1)
     return np.sum(outputs == labels) / float(labels.size)
 
-def precision(outputs, labels):
-    pass
-
-def recall(outputs, labels):
-    pass
 
 metrics = {
     'accuracy': accuracy,
-    'precision': precision,
-    'recall': recall
 }

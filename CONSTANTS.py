@@ -33,3 +33,4 @@ class Constants:
         'dataset': 'MNIST'
     }
     CGAN_EPOCH = 500
+

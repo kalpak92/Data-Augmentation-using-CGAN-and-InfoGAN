@@ -187,7 +187,7 @@ class CGANManager:
             'discriminator': disc.state_dict(),
             'optimD': disc_opt.state_dict(),
             'optimG': gen_opt.state_dict(),
-        }, 'checkpoint/C_GAN/C_GAN_FINAL_MODEL_{}.pt'.format(self.dataset_name))
+        }, 'checkpoint/C_GAN/C_GAN_FINAL_MODEL_{}'.format(self.dataset_name))
 
         # utils.plot_loss_GAN(G_losses, D_losses, self.dataset_name)
         # utils.plot_animation(img_list, self.dataset_name)

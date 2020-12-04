@@ -1,11 +1,11 @@
 import os
 import torch
-
 import convNet
 from build_dataset import DataLoader
 from train import TrainCnn
 from test import TestCnn
-from utils import configParams, get_device, save_checkpoint, load_checkpoint, save_dict_to_json
+from utils import configParams, get_device, save_checkpoint, load_checkpoint, save_dict_to_json, \
+    calculate_evaluation_metrics
 
 
 class ConvNetManger():
@@ -15,15 +15,15 @@ class ConvNetManger():
         self.model_dir = model_dir
         self.config_params = None
 
-    def get_train_val_dataLoader(self, num_workers=1, pin_memory=False):
-        train_dl = self.dataloader.get_train_val_dataloader(batch_size=self.config_params.batch_size,
-                                                            num_workers=num_workers, pin_memory=pin_memory,
-                                                            validation_size=0.1)
+    def get_train_dataLoader(self, num_workers=1, pin_memory=False):
+        train_dl = self.dataloader.get_train_dataloader(batch_size=self.config_params.batch_size,
+                                                        num_workers=num_workers, pin_memory=pin_memory)
         return train_dl
 
     def get_test_dataLoader(self, num_workers=1, pin_memory=False):
         test_dl = self.dataloader.get_test_loader(batch_size=self.config_params.batch_size,
                                                   num_workers=num_workers, pin_memory=pin_memory)
+
         return test_dl
 
     def initialize_weights_biases(self, model):
@@ -43,17 +43,14 @@ class ConvNetManger():
         self.config_params.device = get_device()
         self.config_params.loss_plot_path = os.path.join(self.model_dir, 'loss_plot.jpeg')
 
-        if self.dataset_name == "MNIST":
-            self.config_params.num_channels = 1
-        elif self.dataset_name == "CIFAR10":
-            self.config_params.num_channels = 3
+        self.config_params.num_channels = 1
 
     def load_train_data(self):
         print("Device: ", self.config_params.device)
         if torch.cuda.is_available():
-            self.config_params.train_dataloader = self.get_train_val_dataLoader(num_workers=4, pin_memory=True)
+            self.config_params.train_dataloader = self.get_train_dataLoader(num_workers=4, pin_memory=True)
         else:
-            self.config_params.train_dataloader = self.get_train_val_dataLoader()
+            self.config_params.train_dataloader = self.get_train_dataLoader()
 
     def load_test_data(self):
         print("Device: ", self.config_params.device)
@@ -81,8 +78,11 @@ class ConvNetManger():
         metrics = convNet.metrics
 
         convNet_test = TestCnn()
-        test_metrics = convNet_test.test(model, metrics, self.config_params)
+        test_metrics, predictions, labels = convNet_test.test(model, metrics, self.config_params)
+        print("Predictions: ", len(predictions))
+        print("Labels: ", len(labels))
 
+        calculate_evaluation_metrics(labels, predictions)
         save_path = os.path.join(self.model_dir, "metrics_test.json")
         save_dict_to_json(test_metrics, save_path)
 
@@ -90,8 +90,8 @@ class ConvNetManger():
 if __name__ == '__main__':
     network_manager = ConvNetManger("MNIST")
     network_manager.get_model_config()
-    network_manager.load_train_data()
-    #network_manager.convNet_train()
+    # network_manager.load_train_data()
+    # network_manager.convNet_train()
 
     network_manager.load_test_data()
     network_manager.convNet_test()

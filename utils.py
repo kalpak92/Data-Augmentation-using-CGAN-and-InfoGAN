@@ -7,6 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torchvision.utils as vutils
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix
 
 from CONSTANTS import Constants
 
@@ -236,3 +237,11 @@ def plot_animation(img_list, dataset_name):
     anim.save(Constants.INFO_GAN_ANIM_PATH.format(dataset_name), dpi=80,
               writer='imagemagick')
     plt.show()
+
+
+def calculate_evaluation_metrics(y_true, y_pred):
+    print("Precision Score : " ,precision_score(y_true, y_pred, average="macro"))
+    print("Recall Score : ",recall_score(y_true, y_pred, average="macro"))
+    print("F1 Score : ", f1_score(y_true, y_pred, average="macro"))
+    print("Accuracy Score : ", accuracy_score(y_true, y_pred,))
+    print("Confusion Matrix : ", confusion_matrix(y_true, y_pred))
