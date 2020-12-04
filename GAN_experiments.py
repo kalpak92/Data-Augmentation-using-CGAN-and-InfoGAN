@@ -1,6 +1,6 @@
 import utils
 from CONSTANTS import Constants
-from C_GAN_Manager import C_GAN_Manager
+# from C_GAN_Manager import C_GAN_Manager
 from INFO_GAN_Manager import INFO_GAN_Manager
 from build_dataset import DataLoader
 
@@ -16,7 +16,8 @@ class GAN_experiments:
                                     MNIST_params["MNIST_disc_c_dim"],
                                     MNIST_params["MNIST_num_con_c"],
                                     train_dataloader_mnist)
-        info_gan.train_info_GAN()
+        # info_gan.train_info_GAN()
+        info_gan.generate_images()
 
     # @staticmethod
     # def c_GAN_Experiments(MNIST_params, device, img_size):
@@ -37,8 +38,8 @@ MNIST_params = {
 }
 device = utils.get_device()
 
-# info_GAN = GAN_experiments()
-# info_GAN.info_GAN_Experiments(MNIST_params, device)
+info_GAN = GAN_experiments()
+info_GAN.info_GAN_Experiments(MNIST_params, device)
 
 # c_GAN = GAN_experiments()
 # c_GAN.c_GAN_Experiments(MNIST_params, device, 28)
