@@ -323,14 +323,4 @@ class INFO_GAN_Manager:
         plt.imshow(np.transpose(vutils.make_grid(generated_img2, nrow=10, padding=2, normalize=True), (1, 2, 0)))
         plt.show()
 
-        img_tensor = torch.load('tensor.pt')
-        print(img_tensor)
-
-        for i in range(1):
-            plt.axis('off')
-            np_image = np.transpose(generated_img2[i], (1, 2, 0))
-            print(np_image.shape)
-            plt.imshow(np_image)
-            plt.savefig("Image_{0}".format(i))
-
 

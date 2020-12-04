@@ -12,7 +12,7 @@ class GAN_experiments:
     @staticmethod
     def info_GAN_Experiments(MNIST_params, device):
         dl_mnist = DataLoader(MNIST_params["database_name"])
-        train_dataloader_mnist = dl_mnist.get_train_val_dataloader(batch_size=128, shuffle=True)
+        train_dataloader_mnist = dl_mnist.get_train_dataloader(batch_size=128, shuffle=True)
         info_gan = INFO_GAN_Manager(device, MNIST_params["database_name"],
                                     MNIST_params["MNIST_num_z"],
                                     MNIST_params["MNIST_num_disc_c"],
