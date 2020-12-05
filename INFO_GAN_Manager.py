@@ -303,7 +303,7 @@ class INFO_GAN_Manager:
         with torch.no_grad():
             generated_img1 = netG(noise1).detach().cpu()
         print(generated_img1.size())
-        torch.save(generated_img1, '30k_image_set_MNIST_noise_1.pt')
+        torch.save(generated_img1, 'C_GAN_generate_datasets/30k_image_set_MNIST_noise_1.pt')
 
         # Display the generated image.
         fig = plt.figure(figsize=(10, 10))
@@ -320,7 +320,8 @@ class INFO_GAN_Manager:
         # # Display the generated image.
         fig = plt.figure(figsize=(10, 10))
         plt.axis("off")
-        plt.imshow(np.transpose(vutils.make_grid(generated_img2, nrow=10, padding=2, normalize=True), (1, 2, 0)))
+        plt.imshow(np.transpose(vutils.make_grid(generated_img2,
+                                                 nrow=10, padding=2, normalize=True), (1, 2, 0)))
         plt.show()
 
 

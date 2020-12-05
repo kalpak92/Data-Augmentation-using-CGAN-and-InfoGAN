@@ -7,7 +7,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torchvision.utils as vutils
-from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, plot_confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix
+from torchvision.utils import make_grid
 
 from CONSTANTS import Constants
 
@@ -87,7 +88,6 @@ def save_checkpoint(state, checkpoint):
     torch.save(state, filepath)
 
 
-
 def load_checkpoint(checkpoint, model, optimizer=None):
     """Loads model parameters (state_dict) from file_path. If optimizer is provided, loads state_dict of
     optimizer assuming it is present in checkpoint.
@@ -107,7 +107,6 @@ def load_checkpoint(checkpoint, model, optimizer=None):
     return checkpoint
 
 
-
 def get_device():
     return torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -122,6 +121,19 @@ def plot_loss_epoch(train_loss_avg, fig_name):
     plt.draw()
     plt.savefig(fig_name, dpi=220)
     plt.clf()
+
+
+def show_tensor_images(image_tensor, num_images=100, size=(1, 28, 28), nrow=10, show=True):
+    '''
+    Function for visualizing images: Given a tensor of images, number of images, and
+    size per image, plots and prints the images in an uniform grid.
+    '''
+    image_tensor = (image_tensor + 1) / 2
+    image_unflat = image_tensor.detach().cpu()
+    image_grid = make_grid(image_unflat[:num_images], nrow=nrow)
+    plt.imshow(image_grid.permute(1, 2, 0).squeeze())
+    if show:
+        plt.show()
 
 
 def plot_train_images(device, dataloader, fig_name):
@@ -240,8 +252,8 @@ def plot_animation(img_list, dataset_name):
 
 
 def calculate_evaluation_metrics(y_true, y_pred):
-    print("Precision Score : " ,precision_score(y_true, y_pred, average="macro"))
-    print("Recall Score : ",recall_score(y_true, y_pred, average="macro"))
+    print("Precision Score : ", precision_score(y_true, y_pred, average="macro"))
+    print("Recall Score : ", recall_score(y_true, y_pred, average="macro"))
     print("F1 Score : ", f1_score(y_true, y_pred, average="macro"))
-    print("Accuracy Score : ", accuracy_score(y_true, y_pred,))
+    print("Accuracy Score : ", accuracy_score(y_true, y_pred, ))
     print("Confusion Matrix : ", confusion_matrix(y_true, y_pred))

@@ -33,7 +33,8 @@ class GAN_experiments:
             train_dataloader_mnist = dl_mnist.get_train_dataloader(batch_size=128, num_workers=1)
         c_gan = CGANManager(device, CGAN_params["database_name"], train_dataloader_mnist,
                             CGAN_params["n_classes"], CGAN_params["z_dim"])
-        c_gan.train_CGAN()
+        # c_gan.train_CGAN()
+        c_gan.test_CGAN()
 
 
 
@@ -47,7 +48,7 @@ MNIST_params = {
 device = utils.get_device()
 
 info_GAN = GAN_experiments()
-info_GAN.info_GAN_Experiments(MNIST_params, device)
+# info_GAN.info_GAN_Experiments(MNIST_params, device)
 
 CGAN_params = {
     "database_name": Constants.MNIST,

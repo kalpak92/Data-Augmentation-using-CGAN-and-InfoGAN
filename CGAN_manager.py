@@ -1,10 +1,14 @@
 import time
+from itertools import repeat
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-import torch.nn.functional as F
 import torch.nn as nn
+import torch.nn.functional as F
 import torchvision.utils as vutils
+
+import utils
 from CGAN_model_MNIST import Generator, Discriminator, get_noise
 from CONSTANTS import Constants
 
@@ -159,7 +163,6 @@ class CGANManager:
                           % (epoch + 1, Constants.CGAN_EPOCH, i, len(self.dataloader),
                              disc_loss.item(), gen_loss.item()))
 
-
             epoch_time = time.time() - epoch_start_time
             print("Time taken for Epoch %d: %.2fs" % (epoch + 1, epoch_time))
 
@@ -191,3 +194,34 @@ class CGANManager:
 
         # utils.plot_loss_GAN(G_losses, D_losses, self.dataset_name)
         # utils.plot_animation(img_list, self.dataset_name)
+
+    def test_CGAN(self):
+        z_dim = 64
+        mnist_shape = (1, 28, 28)
+        n_classes = 10
+        generator_input_dim, discriminator_im_chan = self.get_input_dimensions(z_dim, mnist_shape, n_classes)
+        gen = Generator(input_dim=generator_input_dim).to(self.device)
+        gen.load_state_dict(torch.load('./checkpoint/C_GAN/Generator_state_dict_model.pt',
+                                       map_location=torch.device('cpu')))
+        gen = gen.eval()
+
+        arr_0 = list(repeat(3, 5400))
+        arr_1 = list(repeat(4, 5400))
+        arr_2 = list(repeat(6, 5400))
+        arr_3 = list(repeat(7, 5400))
+        arr_4 = list(repeat(2, 5400))
+        arr_5 = list(repeat(1, 5400))
+        arr_6 = list(repeat(5, 5400))
+        arr_7 = list(repeat(9, 5400))
+        arr_9 = list(repeat(8, 5400))
+        arr_8 = list(repeat(0, 5400))
+
+        one_hot_labels = self.get_one_hot_labels(
+            torch.tensor(arr_0 + arr_1 + arr_2 + arr_3 + arr_4 +
+                         arr_5 + arr_6 + arr_7 + arr_8 + arr_9).to(self.device), 10)
+        fake_noise = get_noise(54000, z_dim, device=self.device)
+        noise_and_labels = self.combine_vectors(fake_noise, one_hot_labels)
+        generated_img1 = gen(noise_and_labels)
+        print(generated_img1.size())
+        torch.save(generated_img1, 'C_GAN_generate_datasets/54k_image_set_MNIST_noise_1.pt')
+        # utils.show_tensor_images(fake)
