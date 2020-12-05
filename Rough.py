@@ -6,7 +6,7 @@ from torch.utils.data import ConcatDataset
 
 from utils import *
 
-img_tensor = torch.load('30k_image_set_MNIST_noise_1.pt')
+img_tensor = torch.load('./Info_GAN_generate_datasets/30k_image_set_MNIST_noise_1.pt')
 idx = np.arange(10).repeat(3000)
 
 # img_tensor = torch.load('48k_image_set_MNIST_noise_1.pt')
@@ -72,22 +72,6 @@ labels_2D = np.concatenate((arr_0, arr_1, arr_2, arr_3, arr_4, arr_5, arr_6, arr
 print(labels_2D.shape)
 print(labels_2D)
 print("-----------")
-
-np_image = np.transpose(img_tensor[27000], (1, 2, 0))
-# print(np_image.shape)
-plt.imshow(np_image)
-plt.show()
-
-#
-# for i in range(1, 30000, 2999):
-#     print(i)
-#     plt.axis('off')
-#     print(img_tensor[i].size())
-#     np_image = np.transpose(img_tensor[i], (1, 2, 0))
-#     # print(np_image.shape)
-#     plt.imshow(np_image)
-#     plt.show()
-#     # plt.savefig("Image_{0}".format(i))
 
 root = 'data/'
 

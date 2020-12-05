@@ -50,12 +50,27 @@ class DataLoader:
                 pin_memory=pin_memory)
             return self.train_data_loader
         else:
-            split_lengths = [int(len(self.train_dataset) * split_percentage),
-                             int(len(self.train_dataset) * (1 - split_percentage))]
+            # split_lengths = [int(len(self.train_dataset) * split_percentage),
+            #                  int(len(self.train_dataset) * (1 - split_percentage))]
+            #
+            # subset_trainA, subset_trainB = random_split(self.train_dataset, split_lengths)
 
-            subset_trainA, subset_trainB = random_split(self.train_dataset, split_lengths)
+            return self.get_train_dataset_split(split_percentage=split_percentage)
 
-            return subset_trainA, subset_trainB
+    def get_train_dataset_split(self, split_percentage):
+        self.__load_train_dataset()
+        split_lengths = [int(len(self.train_dataset) * split_percentage),
+                         int(len(self.train_dataset) * (1 - split_percentage))]
+
+        subset_trainA, subset_trainB = random_split(self.train_dataset, split_lengths)
+        return subset_trainA, subset_trainB
+
+    def get_test_dataset_split(self, split_percentage):
+        _, subset_trainB = self.get_train_dataset_split(split_percentage=split_percentage)
+        self.__load_test_dataset()
+        subset_test_dataset = ConcatDataset([subset_trainB, self.test_dataset])
+        return subset_test_dataset
+
 
     def get_test_loader(self, batch_size, shuffle=False, num_workers=1, pin_memory=False):
         self.__load_test_dataset()
