@@ -5,7 +5,7 @@
     "dropout_rate":0.8,
     "weight_decay": 1e-5,
     "split_percentage": 0.5,
-    "generated_dataset_path": "./Info_GAN_generate_datasets/30k_image_set_MNIST_noise_1.pt",
+    "generated_dataset_path": "./C_GAN_generate_datasets/30k_image_set_MNIST_noise_1.pt",
     "use_augmented": true,
     "save_summary_steps": 100
 }

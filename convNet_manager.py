@@ -115,7 +115,7 @@ class ConvNetManger():
 
 
 if __name__ == '__main__':
-    network_manager = ConvNetManger(dataset_name="MNIST", model_dir='experiments/mnist_infoGan_30k')
+    network_manager = ConvNetManger(dataset_name="MNIST", model_dir='experiments/mnist_cGan_54k')
     network_manager.get_model_config()
     network_manager.load_data()
     # network_manager.load_train_data()
