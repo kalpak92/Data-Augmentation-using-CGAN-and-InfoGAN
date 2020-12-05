@@ -1,6 +1,7 @@
 import os
 import torch
 import convNet
+from augment_dataset import AugmentedDataloader
 from build_dataset import DataLoader
 from train import TrainCnn
 from test import TestCnn
@@ -12,6 +13,7 @@ class ConvNetManger():
     def __init__(self, dataset_name, model_dir='experiments/base_cnn'):
         self.dataset_name = dataset_name
         self.dataloader = DataLoader(dataset_name)
+        self.augmented_dataloader = AugmentedDataloader()
         self.model_dir = model_dir
         self.config_params = None
 
@@ -25,6 +27,16 @@ class ConvNetManger():
                                                   num_workers=num_workers, pin_memory=pin_memory)
 
         return test_dl
+
+    def get_augmented_dataLoader(self, num_workers=1, pin_memory=False):
+        augmented_train_dataloader, augmented_test_dataloader = \
+            self.augmented_dataloader.get_augmented_dataloader(original_dataloader=self.dataloader,
+                                                               split_percentage=self.config_params.split_percentage,
+                                                               batch_size=self.config_params.batch_size,
+                                                               num_workers=num_workers, pin_memory=pin_memory,
+                                                               generated_dataset_path=self.config_params.generated_dataset_path)
+
+        return augmented_train_dataloader, augmented_test_dataloader
 
     def initialize_weights_biases(self, model):
         if isinstance(model, torch.nn.Conv2d):
@@ -42,22 +54,37 @@ class ConvNetManger():
         self.config_params.cuda = torch.cuda.is_available()
         self.config_params.device = get_device()
         self.config_params.loss_plot_path = os.path.join(self.model_dir, 'loss_plot.jpeg')
-
         self.config_params.num_channels = 1
 
-    def load_train_data(self):
-        print("Device: ", self.config_params.device)
-        if torch.cuda.is_available():
-            self.config_params.train_dataloader = self.get_train_dataLoader(num_workers=4, pin_memory=True)
-        else:
-            self.config_params.train_dataloader = self.get_train_dataLoader()
+    # def load_train_data(self):
+    #     print("Device: ", self.config_params.device)
+    #     if torch.cuda.is_available():
+    #         self.config_params.train_dataloader = self.get_train_dataLoader(num_workers=4, pin_memory=True)
+    #     else:
+    #         self.config_params.train_dataloader = self.get_train_dataLoader()
+    #
+    # def load_test_data(self):
+    #     print("Device: ", self.config_params.device)
+    #     if torch.cuda.is_available():
+    #         self.config_params.test_dataloader = self.get_test_dataLoader(num_workers=4, pin_memory=True)
+    #     else:
+    #         self.config_params.test_dataloader = self.get_test_dataLoader()
 
-    def load_test_data(self):
-        print("Device: ", self.config_params.device)
-        if torch.cuda.is_available():
-            self.config_params.test_dataloader = self.get_test_dataLoader(num_workers=4, pin_memory=True)
+    def load_data(self):
+        if self.config_params.use_augmented is True:
+            if torch.cuda.is_available():
+                self.config_params.train_dataloader, self.config_params.test_dataloader = \
+                    self.get_augmented_dataLoader(num_workers=4, pin_memory=True)
+            else:
+                self.config_params.train_dataloader, self.config_params.test_dataloader = \
+                    self.get_augmented_dataLoader()
         else:
-            self.config_params.test_dataloader = self.get_test_dataLoader()
+            if torch.cuda.is_available():
+                self.config_params.train_dataloader = self.get_train_dataLoader(num_workers=4, pin_memory=True)
+                self.config_params.test_dataloader = self.get_test_dataLoader(num_workers=4, pin_memory=True)
+            else:
+                self.config_params.train_dataloader = self.get_train_dataLoader()
+                self.config_params.test_dataloader = self.get_test_dataLoader()
 
     def convNet_train(self):
         model = convNet.ConvNet(self.config_params).to(self.config_params.device)
@@ -88,10 +115,11 @@ class ConvNetManger():
 
 
 if __name__ == '__main__':
-    network_manager = ConvNetManger("MNIST")
+    network_manager = ConvNetManger(dataset_name="MNIST", model_dir='experiments/mnist_infoGan_30k')
     network_manager.get_model_config()
+    network_manager.load_data()
     # network_manager.load_train_data()
-    # network_manager.convNet_train()
-
-    network_manager.load_test_data()
+    network_manager.convNet_train()
+    #
+    # network_manager.load_test_data()
     network_manager.convNet_test()

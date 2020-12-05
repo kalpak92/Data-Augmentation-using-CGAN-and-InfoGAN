@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from build_dataset import DataLoader
 
 
-class AugmentDataset:
+class AugmentedDataloader:
     def get_augmented_dataloader(self, original_dataloader=DataLoader("MNIST"), split_percentage=1, batch_size=64,
                                  shuffle=True, num_workers=1, pin_memory=False,
                                  generated_dataset_path='./Info_GAN_generate_datasets/30k_image_set_MNIST_noise_1.pt'):
@@ -21,13 +21,13 @@ class AugmentDataset:
 
         augmented_data_tensor = torch.cat((original_data_tensor, generated_image_tensor), 0)
         augmented_label_tensor = torch.cat((original_label_tensor, generated_labels), 0)
-        print("Original data tensor", original_data_tensor.size())
-        print("Generated data tensor", generated_image_tensor.size())
-        print("original_label_tensor", original_label_tensor.size())
-        print("generated_labels", generated_labels.size())
+        # print("Original data tensor", original_data_tensor.size())
+        # print("Generated data tensor", generated_image_tensor.size())
+        # print("original_label_tensor", original_label_tensor.size())
+        # print("generated_labels", generated_labels.size())
         augmented_dataset = torch.utils.data.TensorDataset(augmented_data_tensor, augmented_label_tensor)
-        print("augmented train dataset = ", len(augmented_dataset))
-        print("augmented test dataset = ", len(subset_test_dataset))
+        # print("augmented train dataset = ", len(augmented_dataset))
+        # print("augmented test dataset = ", len(subset_test_dataset))
         augmented_train_dataloader = torch.utils.data.DataLoader(augmented_dataset, batch_size=batch_size,
                                                                  shuffle=shuffle, num_workers=num_workers,
                                                                  pin_memory=pin_memory)
@@ -67,5 +67,5 @@ class AugmentDataset:
 
 if __name__ == '__main__':
     original_dataloader = DataLoader("MNIST")
-    augmented_dataset = AugmentDataset()
+    augmented_dataset = AugmentedDataloader()
     aug_train_dataloader, aug_test_dataloader = augmented_dataset.get_augmented_dataloader(original_dataloader=original_dataloader, split_percentage=0.5)
