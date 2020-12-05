@@ -1,184 +1,144 @@
-#                        import os
-# import pickle
-# import random
-#
-# import cv2
-# import numpy as np
-#
-#
-# class Data_Preprocess_Manager:
-#     def create_data(self, data_dir, labels, img_size):
-#         data = []
-#         for label in labels:
-#             path = os.path.join(data_dir, label)
-#             class_num = labels.index(label)
-#             for img in os.listdir(path):
-#                 try:
-#                     img_path = os.path.join(path, img)
-#                     img_array = cv2.imread(img_path)
-#                     resized_img = cv2.resize(img_array, (img_size, img_size))
-#                     # plt.imshow(resized_img)
-#                     # plt.show()
-#                     print(img_path)
-#                     data.append([resized_img, class_num])
-#
-#                 except Exception as e:
-#                     pass
-#
-#             # shuffle the training data
-#             random.shuffle(data)
-#
-#         return data
-#
-#     @staticmethod
-#     def create_pickle_file(training_data, x_pickle_file_name, y_pickle_file_name):
-#         X = []
-#         Y = []
-#         for data, label in training_data:
-#             X.append(data)
-#             Y.append(label)
-#
-#         X = np.array(X)
-#         X = X.swapaxes(1, 3)
-#         print(X.shape)
-#         print(len(Y))
-#
-#         # Create X
-#         print(x_pickle_file_name)
-#         pickle_out = open(x_pickle_file_name, "wb")
-#         pickle.dump(X, pickle_out, protocol=4)
-#         # pickle.dump(X, pickle_out)
-#         pickle_out.close()
-#
-#         # Create Y
-#         print(y_pickle_file_name)
-#         pickle_out = open(y_pickle_file_name, "wb")
-#         pickle.dump(Y, pickle_out)
-#         pickle_out.close()
-#
-#
-# def create_pickle_for_training():
-#     # ImageNet Dataset
-#     IMAGE_DATA_DIR = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapeng_Wu/Git_Hub/Texture_Classification/ImageNet-Datasets-Downloader/data_root_folder"
-#     IMAGE_NET_LABELS = \
-#         ["alp", "artichoke", "Band Aid", "bathing cap", "bookshop", "bull mastiff", "butcher shop",
-#          "carbonara", "chain", "chain saw", "chainlink fence", "cheetah", "cliff dwelling", "common iguana",
-#          "confectionery", "container ship", "corn", "crossword puzzle", "dishrag", "dock", "flat-coated retriever",
-#          "gibbon", "grocery store", "head cabbage", "honeycomb", "hook", "hourglass", "jigsaw puzzle",
-#          "jinrikisha", "lakeside", "lawn mower", "maillot", "microwave", "miniature poodle", "muzzle",
-#          "notebook", "ocarina", "orangutan", "organ", "paper towel", "partridge", "rapeseed",
-#          "sandbar", "sarong", "sea urchin", "shoe shop", "shower curtain", "stone wall", "theater curtain", "tile roof",
-#          "turnstile", "vault", "velvet", "window screen", "wool", "yellow lady's slipper"]
-#
-#     IMAGE_NET_LABELS_S2 = \
-#         ["common iguana", "partridge", "flat-coated retriever", "bull mastiff", "miniature poodle", "cheetah",
-#          "sea urchin", "orangutan", "gibbon", "Band Aid", "bathing cap", "chain saw", "container ship", "hook",
-#          "hourglass", "jinrikisha", "lawn mower", "maillot", "microwave", "muzzle", "notebook", "ocarina", "organ",
-#          "paper towel", "sarong", "turnstile", "crossword puzzle", "yellow lady's slipper"
-#          ]
-#
-#     IMAGE_NET_LABELS_T = \
-#         ["alp", "artichoke", "bookshop", "butcher shop",
-#          "carbonara", "chain", "chainlink fence", "cliff dwelling",
-#          "confectionery", "corn", "dishrag", "dock",
-#          "grocery store", "head cabbage", "honeycomb", "jigsaw puzzle",
-#          "lakeside", "rapeseed",
-#          "sandbar", "shoe shop", "shower curtain", "stone wall", "theater curtain", "tile roof",
-#          "vault", "velvet", "window screen", "wool", ]
-#
-#     # Texture Dataset
-#     # DTD
-#     # x_train_pickle_file = "Texture_DTD_Train_X.pickle"
-#     # y_train_pickle_file = "Texture_DTD_Train_Y.pickle"
-#
-#     x_test_pickle_file = "Texture_DTD_Test_X.pickle"
-#     y_test_pickle_file = "Texture_DTD_Test_Y.pickle"
-#
-#     ROOT_PATH = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapeng_Wu/DTD/dtd"
-#     DATASET_PATH = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapeng_Wu/Git_Hub/Texture_Classification/Dataset/Texture/DTD"
-#     # TEXTURE_DATA_Train_DIR = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapeng_Wu/data_root_folder/dataset/texture/dtd/train_images"
-#     # TEXTURE_DATA_Test_DIR = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapen_Wu/data_root_folder/dataset/texture/dtd/test_images"
-#     TEXTURE_LABELS = ["banded", "blotchy", "braided", "bubbly", "bumpy", "chequered", "cobwebbed", "cracked",
-#                       "crosshatched", "crystalline",
-#                       "dotted", "fibrous", "flecked", "freckled", "frilly", "gauzy", "grid", "grooved", "honeycombed",
-#                       "interlaced", "knitted",
-#                       "lacelike", "lined", "marbled", "matted", "meshed", "paisley", "perforated", "pitted", "pleated",
-#                       "polka-dotted", "porous",
-#                       "potholed", "scaly", "smeared", "spiralled", "sprinkled", "stained", "stratified", "striped",
-#                       "studded", "swirly", "veined",
-#                       "waffled", "woven", "wrinkled", "zigzagged"]
-#
-#     # image_net data preprocess
-#
-#     kth_root = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapeng_Wu/Git_Hub/Texture_Classification/Dataset/Texture/FMD/image"
-#
-#
-#
-#     surface_labels = ["fabric", "foliage", "glass", "leather", "metal", "paper", "plastic", "stone", "water", "wood"]
-#     print(len(surface_labels))
-#
-#     dpm = Data_Preprocess_Manager()
-#     x_img_pickle_file_name = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapeng_Wu/Git_Hub/Texture_Classification/Dataset/Texture/FMD/FMD_X_vaild.pickle"
-#     y_img_pickle_file_name = "/Users/shantanughosh/Desktop/Shantanu_MS/Research/Dapeng_Wu/Git_Hub/Texture_Classification/Dataset/Texture/FMD/FMD_Y_vaild.pickle"
-#
-#     # for x in os.listdir(kth_root):
-#     #     surface_labels.append(x)
-#
-#     print(surface_labels)
-#
-#     image_net_training_data = dpm.create_data(kth_root, surface_labels, 227)
-#     dpm.create_pickle_file(image_net_training_data, x_img_pickle_file_name, y_img_pickle_file_name)
-#
-#     # texture data preprocess
-#     # testing
-#     # for i in range(10):
-#     #     idx = i + 1
-#     #     TEXTURE_DATA_Test_DIR = ROOT_PATH + "/test" + str(idx)
-#     #     print(TEXTURE_DATA_Test_DIR)
-#     #     texture_training_data = dpm.create_data(TEXTURE_DATA_Test_DIR, TEXTURE_LABELS, 227)
-#     #     x_train_pickle_file = DATASET_PATH + "/Texture_DTD_test" + str(idx) + "_X.pickle"
-#     #     y_train_pickle_file = DATASET_PATH + "/Texture_DTD_test" + str(idx) + "_Y.pickle"
-#     #     dpm.create_pickle_file(texture_training_data, x_train_pickle_file, y_train_pickle_file)
-#     #
-#     # # training
-#     # for i in range(10):
-#     #     idx = i + 1
-#     #     TEXTURE_DATA_Test_DIR = ROOT_PATH + "/train" + str(idx)
-#     #     print(TEXTURE_DATA_Test_DIR)
-#     #     texture_training_data = dpm.create_data(TEXTURE_DATA_Test_DIR, TEXTURE_LABELS, 227)
-#     #     x_train_pickle_file = DATASET_PATH + "/Texture_DTD_train" + str(idx) + "_X.pickle"
-#     #     y_train_pickle_file = DATASET_PATH + "/Texture_DTD_train" + str(idx) + "_Y.pickle"
-#     #     dpm.create_pickle_file(texture_training_data, x_train_pickle_file, y_train_pickle_file)
-#     #
-#     # # validation
-#     # for i in range(10):
-#     #     idx = i + 1
-#     #     TEXTURE_DATA_Test_DIR = ROOT_PATH + "/val" + str(idx)
-#     #     print(TEXTURE_DATA_Test_DIR)
-#     #     texture_training_data = dpm.create_data(TEXTURE_DATA_Test_DIR, TEXTURE_LABELS, 227)
-#     #     x_train_pickle_file = DATASET_PATH + "/Texture_DTD_val" + str(idx) + "_X.pickle"
-#     #     y_train_pickle_file = DATASET_PATH + "/Texture_DTD_val" + str(idx) + "_Y.pickle"
-#     #     dpm.create_pickle_file(texture_training_data, x_train_pickle_file, y_train_pickle_file)
-#
-#
-# create_pickle_for_training()
-
-
-import torch
 import matplotlib.pyplot as plt
 import numpy as np
+import torchvision.datasets as dsets
+import torchvision.transforms as transforms
+from torch.utils.data import ConcatDataset
 
-# img_tensor = torch.load('30k_image_set_MNIST_noise_1.pt')
+from utils import *
+
+img_tensor = torch.load('30k_image_set_MNIST_noise_1.pt')
+idx = np.arange(10).repeat(3000)
+
 # img_tensor = torch.load('48k_image_set_MNIST_noise_1.pt')
-img_tensor = torch.load('54k_image_set_MNIST_noise_2.pt')
+# img_tensor = torch.load('54k_image_set_MNIST_noise_2.pt')
 print(img_tensor.size())
+print(idx.shape)
+print(idx[0])
 
-for i in range(1, 30000, 2999):
-    print(i)
+plt.axis('off')
+# print(img_tensor[3000].size())
+
+arr_0 = np.empty(3000)
+arr_0.fill(3)
+print(arr_0.shape)
+print(arr_0)
+
+arr_1 = np.empty(3000)
+arr_1.fill(4)
+print(arr_1.shape)
+print(arr_1)
+
+arr_2 = np.empty(3000)
+arr_2.fill(6)
+print(arr_2.shape)
+print(arr_2)
+
+arr_3 = np.empty(3000)
+arr_3.fill(7)
+print(arr_3.shape)
+print(arr_3)
+
+arr_4 = np.empty(3000)
+arr_4.fill(2)
+print(arr_4.shape)
+print(arr_4)
+
+arr_5 = np.empty(3000)
+arr_5.fill(1)
+print(arr_5.shape)
+print(arr_5)
+
+arr_6 = np.empty(3000)
+arr_6.fill(5)
+print(arr_6.shape)
+print(arr_6)
+
+arr_7 = np.empty(3000)
+arr_7.fill(9)
+print(arr_7.shape)
+print(arr_7)
+
+arr_8 = np.empty(3000)
+arr_8.fill(0)
+print(arr_8.shape)
+print(arr_8)
+
+arr_9 = np.empty(3000)
+arr_9.fill(8)
+print(arr_9.shape)
+print(arr_9)
+
+labels_2D = np.concatenate((arr_0, arr_1, arr_2, arr_3, arr_4, arr_5, arr_6, arr_7, arr_8, arr_9), axis=0)
+print(labels_2D.shape)
+print(labels_2D)
+print("-----------")
+
+np_image = np.transpose(img_tensor[27000], (1, 2, 0))
+# print(np_image.shape)
+plt.imshow(np_image)
+plt.show()
+
+#
+# for i in range(1, 30000, 2999):
+#     print(i)
+#     plt.axis('off')
+#     print(img_tensor[i].size())
+#     np_image = np.transpose(img_tensor[i], (1, 2, 0))
+#     # print(np_image.shape)
+#     plt.imshow(np_image)
+#     plt.show()
+#     # plt.savefig("Image_{0}".format(i))
+
+root = 'data/'
+
+transform = transforms.Compose([
+    transforms.Resize(28),
+    transforms.CenterCrop(28),
+    transforms.ToTensor()])
+
+dataset = dsets.MNIST(root + 'mnist/', train='train',
+                      download=True, transform=transform)
+dataloader = torch.utils.data.DataLoader(dataset,
+                                         batch_size=60000,
+                                         shuffle=True)
+image_tensor_MNIST = None
+label_tensor_MNIST = None
+for i, (data, label) in enumerate(dataloader, 0):
+    image_tensor_MNIST = data
+    label_tensor_MNIST = label
+
+tensor_y = torch.from_numpy(labels_2D)
+
+print(image_tensor_MNIST.size())
+print(img_tensor.size())
+Big_img_tensor = torch.cat((image_tensor_MNIST, img_tensor), 0)
+
+print(label_tensor_MNIST.size())
+print(tensor_y.size())
+Big_label_tensor = torch.cat((label_tensor_MNIST, tensor_y), 0)
+
+print("Big_tensor ---->>")
+print(Big_img_tensor.size())
+print(Big_label_tensor.size())
+
+processed_dataset = torch.utils.data.TensorDataset(Big_img_tensor, Big_label_tensor)
+print(processed_dataset)
+
+aug_dataloader = torch.utils.data.DataLoader(processed_dataset,
+                                         batch_size=128,
+                                         shuffle=True)
+
+for i, (data, label) in enumerate(aug_dataloader, 0):
+    image_tensor_MNIST = data[0]
+    label_tensor_MNIST = label[0]
     plt.axis('off')
-    print(img_tensor[i].size())
+    print(image_tensor_MNIST[i].size())
     np_image = np.transpose(img_tensor[i], (1, 2, 0))
     # print(np_image.shape)
     plt.imshow(np_image)
     plt.show()
-    # plt.savefig("Image_{0}".format(i))
+    break
+
+print(type(processed_dataset))
+
+print(len(aug_dataloader))
