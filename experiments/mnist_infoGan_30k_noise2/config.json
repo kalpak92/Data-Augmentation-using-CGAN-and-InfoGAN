@@ -1,0 +1,11 @@
+{
+    "learning_rate": 1e-3,
+    "batch_size": 64,
+    "num_epochs": 50,
+    "dropout_rate":0.8,
+    "weight_decay": 1e-5,
+    "split_percentage": 0.5,
+    "generated_dataset_path": "./Info_GAN_generate_datasets/30k_image_set_MNIST_noise_2.pt",
+    "use_augmented": true,
+    "save_summary_steps": 100
+}

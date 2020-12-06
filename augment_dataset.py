@@ -48,16 +48,16 @@ class AugmentedDataloader:
         return data_tensor, label_tensor
 
     def get_labels(self):
-        arr_0 = list(repeat(3, 5400))
-        arr_1 = list(repeat(4, 5400))
-        arr_2 = list(repeat(6, 5400))
-        arr_3 = list(repeat(7, 5400))
-        arr_4 = list(repeat(2, 5400))
-        arr_5 = list(repeat(1, 5400))
-        arr_6 = list(repeat(5, 5400))
-        arr_7 = list(repeat(9, 5400))
-        arr_8 = list(repeat(0, 5400))
-        arr_9 = list(repeat(8, 5400))
+        arr_0 = list(repeat(3, 3000))
+        arr_1 = list(repeat(4, 3000))
+        arr_2 = list(repeat(6, 3000))
+        arr_3 = list(repeat(7, 3000))
+        arr_4 = list(repeat(2, 3000))
+        arr_5 = list(repeat(1, 3000))
+        arr_6 = list(repeat(5, 3000))
+        arr_7 = list(repeat(9, 3000))
+        arr_8 = list(repeat(0, 3000))
+        arr_9 = list(repeat(8, 3000))
 
         # labels_2D = np.concatenate((arr_0, arr_1, arr_2, arr_3, arr_4, arr_5, arr_6, arr_7, arr_8, arr_9), axis=0)
         # print(labels_2D.shape)
