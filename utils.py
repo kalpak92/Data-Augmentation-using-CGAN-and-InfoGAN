@@ -272,6 +272,7 @@ def calculate_evaluation_metrics(y_true, y_pred, classes, save_path):
     print("Confusion Matrix : ", cm)
     plt.figure(figsize=(10, 10))
     #plot_confusion_matrix(cm, classes, save_path)
+    print(save_path)
     cm_analysis(y_true=y_true, y_pred=y_pred, filename=save_path, labels=classes)
     return test_metrics
 

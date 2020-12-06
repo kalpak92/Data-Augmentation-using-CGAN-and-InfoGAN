@@ -10,7 +10,7 @@ class AugmentedDataloader:
     def get_augmented_dataloader(self, original_dataloader=DataLoader("MNIST"), split_percentage=1, batch_size=64,
                                  shuffle=True, num_workers=1, pin_memory=False,
                                  generated_dataset_path='./C_GAN_generate_datasets/54k_image_set_MNIST_noise_1.pt'):
-        generated_image_tensor = torch.load(generated_dataset_path)
+        generated_image_tensor = torch.load(generated_dataset_path).detach()
         generated_labels = self.get_labels()
 
         subset_train_datasetA, subset_train_datasetB = \
