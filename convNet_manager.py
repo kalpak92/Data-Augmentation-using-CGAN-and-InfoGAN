@@ -105,17 +105,18 @@ class ConvNetManger():
         metrics = convNet.metrics
 
         convNet_test = TestCnn()
-        test_metrics, predictions, labels = convNet_test.test(model, metrics, self.config_params)
+        predictions, labels = convNet_test.test(model, metrics, self.config_params)
         print("Predictions: ", len(predictions))
         print("Labels: ", len(labels))
 
-        calculate_evaluation_metrics(labels, predictions)
+        dataset_classes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        test_metrics = calculate_evaluation_metrics(labels, predictions, classes=dataset_classes, save_path=os.path.join(self.model_dir,"ConfusionMatrix.jpeg"))
         save_path = os.path.join(self.model_dir, "metrics_test.json")
         save_dict_to_json(test_metrics, save_path)
 
 
 if __name__ == '__main__':
-    network_manager = ConvNetManger(dataset_name="MNIST", model_dir='experiments/mnist_cGan_54k')
+    network_manager = ConvNetManger(dataset_name="MNIST", model_dir='experiments/base_cnn')
     network_manager.get_model_config()
     network_manager.load_data()
     # network_manager.load_train_data()

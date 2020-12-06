@@ -1,16 +1,18 @@
 import json
 import os
-
+import seaborn
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
 import torchvision.utils as vutils
-from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score, confusion_matrix, \
+    plot_confusion_matrix
 from torchvision.utils import make_grid
 
 from CONSTANTS import Constants
+from plot_confusion_matrix import cm_analysis
 
 
 class configParams():
@@ -251,9 +253,25 @@ def plot_animation(img_list, dataset_name):
     plt.show()
 
 
-def calculate_evaluation_metrics(y_true, y_pred):
-    print("Precision Score : ", precision_score(y_true, y_pred, average="macro"))
-    print("Recall Score : ", recall_score(y_true, y_pred, average="macro"))
-    print("F1 Score : ", f1_score(y_true, y_pred, average="macro"))
-    print("Accuracy Score : ", accuracy_score(y_true, y_pred, ))
-    print("Confusion Matrix : ", confusion_matrix(y_true, y_pred))
+
+def calculate_evaluation_metrics(y_true, y_pred, classes, save_path):
+    test_metrics = {}
+    precision = precision_score(y_true, y_pred, average="macro")
+    test_metrics["precision"] = precision
+    recall = recall_score(y_true, y_pred, average="macro")
+    test_metrics["recall"] =recall
+    f1 = f1_score(y_true, y_pred, average="macro")
+    test_metrics["f1_score"] = f1
+    accuracy = accuracy_score(y_true, y_pred, )
+    test_metrics["accuracy"] = accuracy
+    cm = confusion_matrix(y_true, y_pred)
+    print("Precision Score : ", precision )
+    print("Recall Score : ", recall)
+    print("F1 Score : ", f1)
+    print("Accuracy Score : ", accuracy)
+    print("Confusion Matrix : ", cm)
+    plt.figure(figsize=(10, 10))
+    #plot_confusion_matrix(cm, classes, save_path)
+    cm_analysis(y_true=y_true, y_pred=y_pred, filename=save_path, labels=classes)
+    return test_metrics
+

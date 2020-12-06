@@ -84,6 +84,9 @@ class DataLoader:
 
         return self.test_data_loader
 
+    def get_classes(self):
+        return self.train_dataset.classes
+
     def __load_train_dataset(self):
         if self.dataset_name == "MNIST":
             self.__load_train_mnist_dataset(train_transform=self.__get_transform())

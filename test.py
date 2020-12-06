@@ -33,17 +33,17 @@ class TestCnn():
             labels = torch.cat((labels, labels_batch.cpu()), dim=0)
 
             # extract data from torch Variable, move to cpu, convert to numpy arrays
-            output_batch = output_batch.data.cpu().numpy()
-            labels_batch = labels_batch.data.cpu().numpy()
+            # output_batch = output_batch.data.cpu().numpy()
+            # labels_batch = labels_batch.data.cpu().numpy()
 
             # compute all metrics on this batch
-            summary_batch = {metric: metrics[metric](output_batch, labels_batch)
-                             for metric in metrics}
-            summary_batch['loss'] = loss.item()
-            summary.append(summary_batch)
+            # summary_batch = {metric: metrics[metric](output_batch, labels_batch)
+            #                  for metric in metrics}
+            # summary_batch['loss'] = loss.item()
+            # summary.append(summary_batch)
 
         # compute mean of all metrics in summary
-        metrics_mean = {metric: np.mean([x[metric]
-                                         for x in summary]) for metric in summary[0]}
+        # metrics_mean = {metric: np.mean([x[metric]
+        #                                  for x in summary]) for metric in summary[0]}
 
-        return metrics_mean, predictions.numpy(), labels.numpy()
+        return predictions.numpy(), labels.numpy()
