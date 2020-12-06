@@ -127,15 +127,19 @@ python3 convNet_manager.py
 
 The Convolution Neural Network architecture comprises of **convolution**, **max pool** and **batch** **normalization** operations in each layer. Each convolution layer uses a 3x3 filter with padding and stride set to 1. The network comprises of 3 such layers, after which the information is flattened and sent to a fully connected Neural Network having two hidden layers. The fully connected network can have dropout as a regularization parameters set by the user as part of the configuration.
 
-The weights of the Convolutional Neural Networks are initialised using Kaiming for the convolutional layers and Xavier for the fully connected layers.
-
-The optimizer used is Adam and learning rate is set to 1e-3, but the user can set any learning rate as part of the configuration.
-
 
 
 ## Experiments
 
+### Network Details
 
+We have used PyTorch to develop the network. 
+
+The weights of the Convolutional Neural Networks are initialised using ***Kaiming*** for the convolutional layers and ***Xavier*** for the fully connected layers. The optimizer used is **Adam** and learning rate is set to `1e-3`, but the user can set any learning rate as part of the configuration. 
+
+### Datasets
+
+We used 
 
 ## References
 
