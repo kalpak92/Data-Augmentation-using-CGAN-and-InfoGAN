@@ -35,7 +35,7 @@ class ConvNet(nn.Module):
         # Flatten the output for each image
         s = s.reshape(-1, self.num_channels * 24 * 3 * 3)  # batch_size x num_channels x 3 x 3
 
-        # Apply three fully connected layers with dropout
+        # Apply two fully connected layers with dropout
         s = F.dropout(F.relu(self.fcbn1(self.fc1(s))),
                       p=self.dropout_rate, training=self.training)  # batch_size x 120
 
