@@ -8,13 +8,13 @@ For example : `experiments/mnist_infoGan_30k_noise1` has the configurations deta
 
 Then, execute the command:
 
-```shell
+```python3
 python3 convNet_manager.py
 ```
 
 
 
-## Folder Structure
+## Directory Structure
 
 ```shell
 ├── CGAN_manager.py
@@ -123,23 +123,61 @@ python3 convNet_manager.py
 
 
 
-## Model Description
+- The **loss function** plots from InfoGAN and Conditional GAN goes into **`Info_GAN_Plots`** and **`C_GAN_Images`** respectively.
+- The **generated data** from InfoGAN and Conditional GAN goes into **`Info_GAN_generate_datasets`** and **`C_GAN_generate_datasets`**
+- The confusion matrices and evaluation metrics with the augmented train and test data goes into the respective folders under **`experiments/`**.
+- The **`checkpoint`** folder stores the respective models.
 
-The Convolution Neural Network architecture comprises of **convolution**, **max pool** and **batch** **normalization** operations in each layer. Each convolution layer uses a 3x3 filter with padding and stride set to 1. The network comprises of 3 such layers, after which the information is flattened and sent to a fully connected Neural Network having two hidden layers. The fully connected network can have dropout as a regularization parameters set by the user as part of the configuration.
+
+
+## Classifier Description
+
+The Convolution Neural Network architecture comprises of **convolution**, **max pool** and **batch** **normalization** operations in each layer. 
+
+Each convolution layer uses a **3x3 filter** with padding and stride set to 1. The network comprises of 3 such layers, after which the information is flattened and sent to a **fully connected Neural Network** having two hidden layers. The fully connected network can have **dropout** as a regularization parameters set by the user as part of the configuration.
 
 
 
 ## Experiments
 
-### Network Details
+### Classifier Details
 
 We have used PyTorch to develop the network. 
 
 The weights of the Convolutional Neural Networks are initialised using ***Kaiming*** for the convolutional layers and ***Xavier*** for the fully connected layers. The optimizer used is **Adam** and learning rate is set to `1e-3`, but the user can set any learning rate as part of the configuration. 
 
+- Number of epoch: 50
+- Dropout: 0.8
+
 ### Datasets
 
-We used 
+We have used the MNIST dataset to perform our experiments where each image is of 28x28 pixels. The dataset consists of hand written digits from 0 to 9, uniformly distributed. The training dataset consists of 60000 images and the test dataset has 10000 images.
+
+First, we run our model on this available train and test data of MNIST and note down the model performance.
+
+Next, we use our genereated data from Conditional GAN and InfoGAN to augment the existing train datasets and perform several experiments.
+
+The **test dataset** has images from the original MNIST dataset which comprises of the original MNIST test data and the part of the MNIST train data not used for training.
+
+The configurations we used are:
+
+| Augmented DataSet              |   Train Data    | Test Data |
+| ------------------------------ | :-------------: | :-------: |
+| CGAN and MNIST                 | 30k + 30k = 60k |    40K    |
+| CGAN and MNIST                 | 48k + 12k = 60k |    58k    |
+| CGAN and MNIST                 | 54k + 6k = 60k  |    64k    |
+| InfoGAN with Noise 1 and MNIST | 30k + 30k = 60k |    40K    |
+| InfoGAN with Noise 1 and MNIST | 48k + 12k = 60k |    58k    |
+| InfoGAN with Noise 1 and MNIST | 54k + 6k = 60k  |    64k    |
+| InfoGAN with Noise 2 and MNIST | 30k + 30k = 60k |    40K    |
+| InfoGAN with Noise 2 and MNIST | 48k + 12k = 60k |    58k    |
+| InfoGAN with Noise 2 and MNIST | 54k + 6k = 60k  |    64k    |
+
+
+
+### Results
+
+Our experiments on the various configurations of the datasets show best performance when using 30k MNIST data and 30k synthetically generated from the Conditional GAN and InfoGAN. The accuracy dips slightly as we increase the amount of generated data from the GANs as part of the training data, but nonetheless, the accuracy still remains acceptable.
 
 ## References
 
