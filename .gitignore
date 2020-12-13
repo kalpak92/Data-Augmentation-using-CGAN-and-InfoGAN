@@ -7,3 +7,5 @@ __pycache__
 
 
 checkpoint/InfoGAN/MNIST/model_final_MNIST
+*.gz
+notebooks/MNIST/raw/train-labels-idx1-ubyte
